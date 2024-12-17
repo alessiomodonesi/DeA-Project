@@ -3,7 +3,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
-//Class my entry
 class MyEntry {
     private Integer key;
     private String value;
@@ -23,7 +22,6 @@ class MyEntry {
     }
 }
 
-//Class SkipListPQ
 class SkipListPQ {
 
     private double alpha;
@@ -32,19 +30,22 @@ class SkipListPQ {
     public SkipListPQ(double alpha) {
         this.alpha = alpha;
         this.rand = new Random();
-	// TO BE COMPLETED       
+	    // TO BE COMPLETED       
     }
 
     public int size() {
-	// TO BE COMPLETED       
+	    // TO BE COMPLETED
+        return 0;       
     }
 
     public MyEntry min() {
-	// TO BE COMPLETED 
+	    // TO BE COMPLETED 
+        return null;
     }
 
     public int insert(int key, String value) {
-	// TO BE COMPLETED 
+	    // TO BE COMPLETED 
+        return 0;
     }
 
     private int generateEll(double alpha_ , int key) {
@@ -64,15 +65,14 @@ class SkipListPQ {
     }
 
     public MyEntry removeMin() {
-	// TO BE COMPLETED 
+	    // TO BE COMPLETED 
+        return null;
     }
 
     public void print() {
-	// TO BE COMPLETED 
+	    // TO BE COMPLETED 
     }
 }
-
-//TestProgram
 
 public class TestProgram {
     public static void main(String[] args) {
@@ -95,16 +95,16 @@ public class TestProgram {
 
                 switch (operation) {
                     case 0:
-			// TO BE COMPLETED 
+			            // TO BE COMPLETED 
                         break;
                     case 1:
-			// TO BE COMPLETED 
+			            // TO BE COMPLETED 
                         break;
                     case 2:
-			// TO BE COMPLETED 
+			            // TO BE COMPLETED 
                         break;
                     case 3:
-			// TO BE COMPLETED 
+			            // TO BE COMPLETED 
                         break;
                     default:
                         System.out.println("Invalid operation code");
