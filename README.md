@@ -1,4 +1,4 @@
-# Dati e Algoritmi 1
+# Dati e Algoritmi
 
 ## Programming Project 2024-25
 **Version 4 - December 5, 2024**
