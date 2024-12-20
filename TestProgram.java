@@ -27,196 +27,117 @@ class MyEntry {
 }
 
 class SkipListPQ {
-
-    private class Node {
-        int key;
-        String value;
-        Node prev, next, above, below;
-
-        public Node(int key, String value) {
-            this.key = key;
-            this.value = value;
-        }
-    }
-
-    private Node head; // Nodo sentinella superiore sinistro
-    private int height; // Altezza corrente della Skip List
-    private int size; // Numero di elementi nella lista
     private double alpha;
     private Random rand;
-    private int totalTraversedNodes; // Somma totale dei nodi attraversati
-    private int totalInserts; // Numero totale di inserimenti
+    private List<List<MyEntry>> skipList;
 
     public SkipListPQ(double alpha) {
         this.alpha = alpha;
         this.rand = new Random();
-        this.head = new Node(Integer.MIN_VALUE, null); // Nodo sentinella -∞
-        Node tail = new Node(Integer.MAX_VALUE, null); // Nodo sentinella +∞
-        head.next = tail;
-        tail.prev = head;
-        this.height = 0;
-        this.size = 0;
-        this.totalTraversedNodes = 0;
-        this.totalInserts = 0;
+        this.skipList = new ArrayList<>();
+
+        // Sh contains only the two sentinels
+        List<MyEntry> Sh = new ArrayList<>();
+        Sh.add(new MyEntry(Integer.MIN_VALUE, "-inf"));
+        Sh.add(new MyEntry(Integer.MAX_VALUE, "+inf"));
+        skipList.add(Sh);
     }
 
     public int size() {
-        return size;
+        return skipList.get(0).size() - 2;
     }
 
     public MyEntry min() {
-        if (size == 0)
-            return null;
-        Node first = head;
-        while (first.below != null) {
-            first = first.below; // Scendi fino a S₀
-        }
-        first = first.next; // Il primo nodo valido
-        return new MyEntry(first.key, first.value);
+        if (this.size() != 0)
+            return skipList.get(0).get(1);// 1a entry di S0
+        return null;
     }
 
     public int insert(int key, String value) {
-        Node current = head;
-        int traversedNodes = 0; // Contatore dei nodi attraversati
+        MyEntry e = new MyEntry(key, value); // crea una nuova entry con chiave e valore specificati
+        int height = generateEll(alpha, key); // genera l'altezza della entry
 
-        // Trova la posizione corretta in S₀
-        while (current.below != null) { // Scendi al livello inferiore
-            traversedNodes++; // Conta il nodo attuale
-            current = current.below;
-            while (current.next.key < key) { // Muoviti orizzontalmente
-                traversedNodes++; // Conta il nodo attraversato
-                current = current.next;
-            }
+        // aggiunge nuovi livelli se l'altezza generata è maggiore
+        // dell'altezza corrente della skip list
+        while ((skipList.size() - 1) <= height) {
+            List<MyEntry> newLevel = new ArrayList<>(); // crea un nuovo livello vuoto
+            newLevel.add(new MyEntry(Integer.MIN_VALUE, "-inf")); // aggiunge la sentinella sinistra
+            newLevel.add(new MyEntry(Integer.MAX_VALUE, "+inf")); // aggiunge la sentinella destra
+            skipList.add(newLevel); // aggiunge il nuovo livello alla skip list
         }
 
-        // Inserisci il nodo in S₀
-        Node newNode = new Node(key, value);
-        Node nextNode = current.next;
-        current.next = newNode;
-        newNode.prev = current;
-        newNode.next = nextNode;
-        nextNode.prev = newNode;
+        int i = 0; // inizia dal livello superiore Sh
+        while (i <= height) { // scende progressivamente attraverso i livelli fino all'altezza della entry
+            int position = 1; // posizione iniziale nel livello Si, saltandola sentinella sinistra
 
-        // Costruisci la torre
-        int level = generateEll(alpha, key);
-        int currentLevel = 0;
+            // trova la posizione corretta per inserire la entry nel livello corrente Si
+            while (key >= skipList.get(i).get(position).getKey())
+                position++;
 
-        while (currentLevel < level) {
-            // Crea un nuovo livello se necessario
-            if (currentLevel >= height) {
-                height++;
-                Node newHead = new Node(Integer.MIN_VALUE, null);
-                Node newTail = new Node(Integer.MAX_VALUE, null);
-                newHead.next = newTail;
-                newTail.prev = newHead;
-                newHead.below = head;
-                head.above = newHead;
-                head = newHead;
-            }
-
-            // Trova il nodo sopra il current
-            while (current.above == null) {
-                current = current.prev;
-                traversedNodes++; // Conta il nodo mentre ci muoviamo all'indietro
-            }
-            traversedNodes++; // Conta il nodo sopra
-            current = current.above;
-
-            // Inserisci il nuovo nodo nel livello superiore
-            Node newUpperNode = new Node(key, value);
-            newUpperNode.below = newNode;
-            newNode.above = newUpperNode;
-
-            Node upperNext = current.next;
-            current.next = newUpperNode;
-            newUpperNode.prev = current;
-            newUpperNode.next = upperNext;
-            upperNext.prev = newUpperNode;
-
-            newNode = newUpperNode;
-            currentLevel++;
+            skipList.get(i).add(position, e); // inserisce la nuova entry nella posizione corretta nel livello Si
+            i++; // passa al livello inferiore
         }
-
-        size++;
-        totalInserts++;
-        totalTraversedNodes += traversedNodes; // Aggiorna il totale dei nodi attraversati
-        return traversedNodes;
+        return 0;
     }
 
     private int generateEll(double alpha_, int key) {
-        int level = 0;
+        int level = 0; // inizializza il livello a 0
+
+        // verifica se il parametro alpha_ appartiene a [0, 1)
         if (alpha_ >= 0. && alpha_ < 1) {
-            while (rand.nextDouble() < alpha_) {
-                level += 1;
-            }
+            // genera livelli in base a un criterio probabilistico
+            while (rand.nextDouble() < alpha_)
+                level += 1; // incrementa il livello finché rand.nextDouble() è minore di alpha_
         } else {
+            // calcola i livelli in modo deterministico se alpha_ non è nel range [0, 1)
             while (key != 0 && key % 2 == 0) {
-                key = key / 2;
-                level += 1;
+                key = key / 2; // divide la chiave per 2 finché è pari
+                level += 1; // incrementa il livello per ogni divisione riuscita
             }
         }
-        return level;
+
+        return level; // restituisce il livello calcolato
     }
 
     public MyEntry removeMin() {
-        if (size == 0)
-            return null;
+        MyEntry e = min(); // recupera la entry con chiave minima
+        if (e == null)
+            return e;
 
-        Node current = head;
-        while (current.below != null) {
-            current = current.below;
-        }
-        current = current.next;
-
-        MyEntry minEntry = new MyEntry(current.key, current.value);
-
-        // Rimuovi il nodo e aggiorna i collegamenti
-        while (current != null) {
-            Node next = current.next;
-            Node prev = current.prev;
-            if (prev != null)
-                prev.next = next;
-            if (next != null)
-                next.prev = prev;
-            current = current.above;
+        int i = 0; // parte dal livello superiore Sh
+        boolean check = skipList.get(i).remove(e); // rimuove la entry dal livello corrente (Sh)
+        while (check) { // continua a rimuovere la entry finché è presente nei livelli inferiori
+            i++; // scende al livello successivo
+            check = skipList.get(i).remove(e); // prova a rimuovere la entry nel livello corrente
         }
 
-        // Rimuovi livelli vuoti
-        while (head.below != null && head.next.key == Integer.MAX_VALUE) {
-            head = head.below;
-            head.above = null;
-            height--;
-        }
+        // rimuove i livelli vuoti dalla skip list per mantenerla compatta
+        while (skipList.size() > 1 && skipList.get(skipList.size() - 2).size() == 2)
+            skipList.remove(skipList.size() - 1);
 
-        size--;
-        return minEntry;
+        return e; // restituisce la entry rimossa
     }
 
     public void print() {
-        Node current = head;
-        while (current.below != null) {
-            current = current.below;
-        }
-        current = current.next;
+        StringBuilder output = new StringBuilder();
+        int position = 1; // inizializza l'indice per attraversare S0
 
-        List<String> output = new ArrayList<>();
-        while (current.key != Integer.MAX_VALUE) {
-            int count = 1;
-            Node temp = current;
-            while (temp.above != null) {
-                count++;
-                temp = temp.above;
-            }
-            output.add(current.key + " " + current.value + " " + count);
-            current = current.next;
+        // ciclo per iterare attraverso tutti gli elementi di S0, escluse le sentinelle
+        while (position < skipList.get(0).size() - 1) {
+            MyEntry e = skipList.get(0).get(position); // ottiene l'elemento alla posizione i in S0
+
+            int s = 1; // inizializza il livello corrente
+            while ((s < skipList.size()) && skipList.get(s).contains(e)) // numero di livelli in cui la entry è presente
+                s++;
+
+            // aggiunge la entry e il numero di livelli in cui è presente
+            output.append(e).append(" ").append(s).append(", ");
+            position++; // passa all'elemento successivo in S0
         }
-        System.out.println(String.join(", ", output));
+
+        System.out.println(output.substring(0, output.length() - 2)); // rimuove ", " a fine output
     }
 
-    public String statistics() {
-        double avgTraversed = totalInserts > 0 ? (double) totalTraversedNodes / totalInserts : 0.0;
-        return String.format("%.2f %d %d %.2f", alpha, size, totalInserts, avgTraversed);
-    }
 }
 
 public class TestProgram {
@@ -239,29 +160,27 @@ public class TestProgram {
                 int operation = Integer.parseInt(line[0]);
 
                 switch (operation) {
-                    case 0: // min
-                        MyEntry minEntry = skipList.min();
-                        if (minEntry != null)
-                            System.out.println(minEntry);
+                    case 0:
+                        MyEntry e = skipList.min(); // recupera l'elemento con chiave minima nella skip list
+                        if (e != null)
+                            System.out.println(e); // stampa l'elemento minimo
                         break;
-                    case 1: // removeMin
-                        @SuppressWarnings("unused")
-                        MyEntry removed = skipList.removeMin();
+                    case 1:
+                        skipList.removeMin(); // rimuove l'elemento con chiave minima dalla skip list
                         break;
-                    case 2: // insert
-                        int key = Integer.parseInt(line[1]);
-                        String value = line[2];
-                        skipList.insert(key, value);
+                    case 2:
+                        int key = Integer.parseInt(line[1]); // converte la chiave da stringa a intero
+                        String value = line[2]; // recupera il valore associato alla chiave
+                        skipList.insert(key, value); // inserisce una nuova entry (key, value) nella skip list
                         break;
-                    case 3: // print
-                        skipList.print();
+                    case 3:
+                        skipList.print(); // stampa tutte le entry della skip list
                         break;
                     default:
                         System.out.println("Invalid operation code");
+                        return;
                 }
             }
-
-            System.out.println(skipList.statistics());
         } catch (IOException e) {
             System.out.println("Error reading file: " + e.getMessage());
         }
