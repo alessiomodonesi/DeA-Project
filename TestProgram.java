@@ -119,23 +119,23 @@ class SkipListPQ {
     }
 
     public void print() {
-        StringBuilder output = new StringBuilder();
+        StringBuilder stdout = new StringBuilder();
         int position = 1; // inizializza l'indice per attraversare S0
 
         // ciclo per iterare attraverso tutti gli elementi di S0, escluse le sentinelle
         while (position < skipList.get(0).size() - 1) {
             MyEntry e = skipList.get(0).get(position); // ottiene l'elemento alla posizione i in S0
 
-            int s = 1; // inizializza il livello corrente
-            while ((s < skipList.size()) && skipList.get(s).contains(e)) // numero di livelli in cui la entry è presente
-                s++;
+            int i = 1; // inizializza il livello corrente
+            while ((i < skipList.size()) && skipList.get(i).contains(e)) // numero di livelli in cui la entry è presente
+                i++;
 
             // aggiunge la entry e il numero di livelli in cui è presente
-            output.append(e).append(" ").append(s).append(", ");
+            stdout.append(e).append(" ").append(i).append(", ");
             position++; // passa all'elemento successivo in S0
         }
 
-        System.out.println(output.substring(0, output.length() - 2)); // rimuove ", " a fine output
+        System.out.println(stdout.substring(0, stdout.length() - 2)); // rimuove ", " a fine output
     }
 
 }
