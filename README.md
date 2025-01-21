@@ -1,7 +1,8 @@
 # Dati e Algoritmi
 
 ## Programming Project 2024-25
-**Version 4 - December 5, 2024**
+
+Version 4 - December 5, 2024
 
 This project requires you to implement a **Priority Queue** using a skip list, a probabilistic data structure introduced in 1989 by William Pugh for the efficient implementation of the Map ADT [1].
 
@@ -10,6 +11,7 @@ This project requires you to implement a **Priority Queue** using a skip list, a
 ## 1. Skip Lists
 
 ### Skip list structure
+
 Let `M` be a collection of (key, value) pairs with distinct keys. A skip list `S` for `M` consists in a series of lists `{S₀, S₁, ..., Sₕ}`, with `h ≥ 1`, which satisfy the following properties:
 
 - **Order:** Each `Sᵢ` is sorted in increasing order and is delimited by two sentinels with keys `-∞` and `+∞`, respectively.
@@ -31,6 +33,7 @@ Searching for a given key `k` locates the position `p ∈ S₀` containing the l
 ### 1.2 Insert an entry with key `k`
 
 To insert an entry `e` with key `k` into `S`:
+
 1. Run **SkipSearch(k)**.
 2. Let `pᵢ` be the rightmost position in `Sᵢ` reached by SkipSearch.
 3. If `p₀` contains an entry with key `k`, replace it with the new entry `e`.
@@ -51,10 +54,13 @@ When `α ≤ 1/2`, the complexity of search, insertion, and deletion methods is 
 You must implement a **Priority Queue** using a skip list. Specifically, design the following classes:
 
 ### 2.1 `MyEntry` class
+
 Instances are `(Integer, String)` pairs representing the entries.
 
 ### 2.2 `SkipListPQ` class
+
 Instances are skip lists containing entries of class `MyEntry`. The class includes the following methods:
+
 - `size()`: Returns the number of entries.
 - `min()`: Returns the entry with the smallest key and prints its key and value.
 - `insert(key, string)`: Inserts a new entry.
@@ -62,6 +68,7 @@ Instances are skip lists containing entries of class `MyEntry`. The class includ
 - `print()`: Prints all entries in increasing key order with their vertical list sizes.
 
 ### 2.3 `TestProgram` class
+
 This program executes operations specified in an input file. It reads parameters `N` (number of operations) and `α` (head probability) from the file, initializes an empty `SkipListPQ`, and executes the specified operations.
 
 ---
@@ -69,6 +76,7 @@ This program executes operations specified in an input file. It reads parameters
 ## 3. Assignment for 3 points
 
 To obtain full marks:
+
 - Modify `insert(key, string)` to return the number of nodes traversed during insertion.
 - After execution, the program prints:
   - `α`
@@ -83,5 +91,6 @@ Run `TestProgram` with input files from the provided `alphaEfficiencyTest.zip` a
 ## 4. Deliverables
 
 Submit `TestProgram.java` containing all classes. The code must compile and run using:
+
 ```bash
 javac TestProgram.java
