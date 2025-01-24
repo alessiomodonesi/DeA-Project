@@ -58,7 +58,7 @@ class SkipListPQ {
      */
     public MyEntry min() {
         if (this.size() != 0)
-            return skipList.get(0).get(1); // 1a entry di S0
+            return skipList.get(0).get(1); // 1a entry di S0, dopo -inf
         return null;
     }
 
@@ -93,22 +93,18 @@ class SkipListPQ {
     }
 
     private int generateEll(double alpha_, int key) {
-        int level = 0; // inizializza il livello a 0
-
-        // verifica se il parametro alpha_ appartiene a [0, 1)
+        int level = 0;
         if (alpha_ >= 0. && alpha_ < 1) {
-            // genera livelli in base a un criterio probabilistico
-            while (rand.nextDouble() < alpha_)
-                level += 1; // incrementa il livello finché rand.nextDouble() è minore di alpha_
+            while (rand.nextDouble() < alpha_) {
+                level += 1;
+            }
         } else {
-            // calcola i livelli in modo deterministico se alpha_ non è nel range [0, 1)
             while (key != 0 && key % 2 == 0) {
-                key = key / 2; // divide la chiave per 2 finché è pari
-                level += 1; // incrementa il livello per ogni divisione riuscita
+                key = key / 2;
+                level += 1;
             }
         }
-
-        return level; // restituisce il livello calcolato
+        return level;
     }
 
     /**
