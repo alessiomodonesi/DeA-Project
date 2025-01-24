@@ -31,6 +31,9 @@ class SkipListPQ {
     private Random rand;
     private List<List<MyEntry>> skipList;
 
+    /**
+     * @author Alessio Modonesi
+     */
     public SkipListPQ(double alpha) {
         this.alpha = alpha;
         this.rand = new Random();
@@ -43,16 +46,25 @@ class SkipListPQ {
         skipList.add(Sh);
     }
 
+    /**
+     * @author Alessio Modonesi
+     */
     public int size() {
         return skipList.get(0).size() - 2;
     }
 
+    /**
+     * @author Alessio Modonesi
+     */
     public MyEntry min() {
         if (this.size() != 0)
-            return skipList.get(0).get(1);// 1a entry di S0
+            return skipList.get(0).get(1); // 1a entry di S0
         return null;
     }
 
+    /**
+     * @author Alessio Modonesi
+     */
     public int insert(int key, String value) {
         MyEntry e = new MyEntry(key, value); // crea una nuova entry con chiave e valore specificati
         int height = generateEll(alpha, key); // genera l'altezza della entry
@@ -99,6 +111,9 @@ class SkipListPQ {
         return level; // restituisce il livello calcolato
     }
 
+    /**
+     * @author Alessio Modonesi
+     */
     public MyEntry removeMin() {
         MyEntry e = min(); // recupera la entry con chiave minima
         if (e == null)
@@ -118,6 +133,9 @@ class SkipListPQ {
         return e; // restituisce la entry rimossa
     }
 
+    /**
+     * @author Alessio Modonesi
+     */
     public void print() {
         StringBuilder stdout = new StringBuilder();
         int position = 1; // inizializza l'indice per attraversare S0
@@ -159,6 +177,9 @@ public class TestProgram {
                 String[] line = br.readLine().split(" ");
                 int operation = Integer.parseInt(line[0]);
 
+                /**
+                 * @author Alessio Modonesi
+                 */
                 switch (operation) {
                     case 0:
                         MyEntry e = skipList.min(); // recupera l'elemento con chiave minima nella skip list
